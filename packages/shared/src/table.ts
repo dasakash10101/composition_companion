@@ -12,6 +12,8 @@ export interface DegreeCell {
   qualityLabel: string;
   /** e.g. "♭III maj7" - the full roman-numeral chord symbol. */
   romanChordSymbol: string;
+  /** Semitone offset of this chord's root from the mode's own tonic (0-11). */
+  rootSemitoneOffset: number;
   /** Present only when a valid key/tonic was supplied. */
   noteName?: string;
   /** e.g. "B♭maj7" - the actual chord name in the selected key. */
@@ -43,6 +45,7 @@ export function buildModeRow(mode: ModeDefinition, keyRootIndex?: number): ModeR
       quality,
       qualityLabel,
       romanChordSymbol: `${romanNumeral} ${qualityLabel}`,
+      rootSemitoneOffset,
     };
     if (keyRootIndex !== undefined) {
       const rootIndex = transpose(keyRootIndex, rootSemitoneOffset);

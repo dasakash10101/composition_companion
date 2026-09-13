@@ -101,9 +101,17 @@ body {
 }
 
 .table-scroll {
-  overflow-x: auto;
+  /* Pins the chart to the top of the viewport once scrolled past, so it
+     stays reachable for dragging chords into the builder further down. */
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  max-height: 92vh;
+  overflow: auto;
   border: 2px solid var(--border);
   border-radius: 6px;
+  background: var(--cell-bg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
 .modal-table {
@@ -174,8 +182,335 @@ body {
   font-weight: 700;
 }
 
+.chord-cell {
+  position: relative;
+  cursor: grab;
+  transition: background-color 0.1s ease;
+}
+
+.chord-cell:hover {
+  background: var(--header-bg);
+}
+
+.chord-cell__play {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.6rem;
+  line-height: 1;
+  padding: 2px 3px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.chord-cell:hover .chord-cell__play,
+.chord-cell:focus-within .chord-cell__play {
+  opacity: 1;
+}
+
+.chord-cell__play:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.chord-cell--selected .chord-cell__play {
+  color: #fff;
+  opacity: 1;
+}
+
+.chord-cell:active {
+  cursor: grabbing;
+}
+
+.chord-cell--selected {
+  background: var(--accent);
+}
+
+.chord-cell--selected .roman,
+.chord-cell--selected .chord-name {
+  color: #fff;
+}
+
+/* ---------- Chord Chart Builder ---------- */
+
+.chart-builder {
+  margin-top: 36px;
+}
+
+.chart-builder__header h2 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+.chart-builder__header p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  max-width: 640px;
+  font-size: 0.9rem;
+}
+
+.chart-builder__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chart-builder__toolbar select {
+  padding: 6px 8px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--cell-bg);
+  color: var(--fg);
+  font-size: 0.9rem;
+}
+
+.chart-builder__add-section,
+.chart-builder__download,
+.chart-builder__clear {
+  border: 2px solid var(--border);
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.chart-builder__download {
+  background: transparent;
+  color: var(--accent);
+}
+
+.chart-builder__clear {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border);
+  font-weight: 400;
+}
+
+.chart-builder__empty {
+  color: var(--muted);
+  font-style: italic;
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  padding: 24px;
+  text-align: center;
+}
+
+.chart-builder__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-section {
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--cell-bg);
+  overflow: hidden;
+}
+
+.chart-section__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--header-bg);
+  border-bottom: 2px solid var(--border);
+}
+
+.chart-section__kind {
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 6px;
+  background: var(--cell-bg);
+  color: var(--fg);
+}
+
+.chart-section__label {
+  flex: 1 1 140px;
+  min-width: 100px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  background: var(--cell-bg);
+  color: var(--fg);
+  font-size: 0.9rem;
+}
+
+.chart-section__time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.chart-section__time select {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 6px;
+  background: var(--cell-bg);
+  color: var(--fg);
+  font-size: 0.85rem;
+}
+
+.chart-section__tempo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.chart-section__tempo input {
+  width: 52px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 6px;
+  background: var(--cell-bg);
+  color: var(--fg);
+  font-size: 0.85rem;
+}
+
+.chart-section__tempo-unit {
+  font-size: 0.75rem;
+}
+
+.chart-section__remove {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.chart-section__remove:hover {
+  background: #b3261e;
+  color: #fff;
+}
+
+.chart-section__bars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+}
+
+.chart-bar {
+  position: relative;
+  width: 88px;
+  min-height: 64px;
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--bg);
+  padding: 4px;
+}
+
+.chart-bar--filled {
+  border-style: solid;
+  background: var(--cell-bg);
+}
+
+.chart-bar--droppable {
+  border-color: var(--accent);
+  background: var(--header-bg);
+}
+
+.chart-bar__index {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.chart-bar__play {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.65rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.chart-bar__play:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.chart-bar__chord {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-align: center;
+  word-break: break-word;
+}
+
+.chart-bar__remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.chart-bar__remove:hover {
+  background: #b3261e;
+  color: #fff;
+}
+
+.chart-section__add-bar {
+  width: 44px;
+  min-height: 64px;
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.chart-section__add-bar:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* System-level dark mode, unless an explicit light choice overrides it (e.g. a
+   host that offers its own light/dark toggle regardless of OS setting). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #1b1a17;
     --fg: #ece7dd;
     --border: #6b6b6b;
@@ -184,4 +519,15 @@ body {
     --cell-bg: #26241f;
     --header-bg: #322f28;
   }
+}
+
+/* An explicit dark choice wins regardless of OS setting. */
+:root[data-theme='dark'] {
+  --bg: #1b1a17;
+  --fg: #ece7dd;
+  --border: #6b6b6b;
+  --accent: #e08a4a;
+  --muted: #a3a094;
+  --cell-bg: #26241f;
+  --header-bg: #322f28;
 }

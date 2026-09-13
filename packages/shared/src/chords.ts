@@ -70,6 +70,28 @@ function classify(thirdInterval: number, fifthInterval: number, seventhInterval:
   }
 }
 
+/** The semitone offsets (third, fifth, seventh) that define each quality - the inverse of `classify`. */
+export const QUALITY_INTERVALS: Record<Exclude<ChordQuality, 'unknown'>, [number, number, number]> = {
+  maj7: [4, 7, 11],
+  min7: [3, 7, 10],
+  '7': [4, 7, 10],
+  min7b5: [3, 6, 10],
+  dim7: [3, 6, 9],
+  minMaj7: [3, 7, 11],
+  augMaj7: [4, 8, 11],
+  aug7: [4, 8, 10],
+};
+
+/**
+ * Semitone offsets from the root for every tone of a chord of the given
+ * quality, root included (e.g. `maj7` -> `[0, 4, 7, 11]`). Used to turn a
+ * chord symbol back into actual notes, e.g. for audio playback.
+ */
+export function chordToneOffsets(quality: ChordQuality): number[] {
+  if (quality === 'unknown') return [0];
+  return [0, ...QUALITY_INTERVALS[quality]];
+}
+
 /**
  * Builds the diatonic 7th chord on `degreeIndex` (0-6) of a mode defined by
  * `intervals`, returning its quality and the semitone offset of its root
