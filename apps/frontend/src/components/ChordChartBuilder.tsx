@@ -134,31 +134,19 @@ export function ChordChartBuilder({ selectedChord, onClearSelection, songKey }: 
         </p>
       </div>
 
-      <div className="chart-builder__toolbar">
-        <select value={nextKind} onChange={handleKindChange} aria-label="New section type">
-          {SECTION_KINDS.map((k) => (
-            <option key={k} value={k}>
-              {k}
-            </option>
-          ))}
-        </select>
-        <button type="button" className="chart-builder__add-section" onClick={addSection}>
-          + Add section
-        </button>
-        {sections.length > 0 && (
-          <>
-            <button type="button" className="chart-builder__download" onClick={handleDownloadPdf} title="Download this chart as a PDF">
-              Download PDF
-            </button>
-            <button type="button" className="chart-builder__clear" onClick={clearChart}>
-              Clear chart
-            </button>
-          </>
-        )}
-      </div>
+      {sections.length > 0 && (
+        <div className="chart-builder__toolbar">
+          <button type="button" className="chart-builder__download" onClick={handleDownloadPdf} title="Download this chart as a PDF">
+            Download PDF
+          </button>
+          <button type="button" className="chart-builder__clear" onClick={clearChart}>
+            Clear chart
+          </button>
+        </div>
+      )}
 
       {sections.length === 0 ? (
-        <p className="chart-builder__empty">No sections yet — add one above to start building your chart.</p>
+        <p className="chart-builder__empty">No sections yet — add one below to start building your chart.</p>
       ) : (
         <div className="chart-builder__sections">
           {sections.map((section) => (
@@ -175,6 +163,19 @@ export function ChordChartBuilder({ selectedChord, onClearSelection, songKey }: 
           ))}
         </div>
       )}
+
+      <div className="chart-builder__add-row">
+        <select value={nextKind} onChange={handleKindChange} aria-label="New section type">
+          {SECTION_KINDS.map((k) => (
+            <option key={k} value={k}>
+              {k}
+            </option>
+          ))}
+        </select>
+        <button type="button" className="chart-builder__add-section" onClick={addSection}>
+          + Add section
+        </button>
+      </div>
     </section>
   );
 }
